@@ -30,7 +30,7 @@ add_compile_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
 
 set(CMSISCORE ${CMAKE_SOURCE_DIR}/Drivers/CMSIS)
-set(CMSIS_DSP ${CMAKE_SOURCE_DIR}/Lib/CMSIS-DSP)
+set(CMSIS_DSP ${CMAKE_SOURCE_DIR}/CMSIS-DSP)
 add_subdirectory(${CMSIS_DSP}/Source)
 link_libraries(CMSISDSP)
 
