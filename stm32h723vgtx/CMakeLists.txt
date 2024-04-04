@@ -29,6 +29,11 @@ add_link_options(-mfloat-abi=hard -mfpu=fpv4-sp-d16)
 add_compile_options(-mcpu=cortex-m7 -mthumb -mthumb-interwork)
 add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
 
+set(CMSISCORE ${CMAKE_SOURCE_DIR}/Drivers/CMSIS)
+set(CMSIS_DSP ${CMAKE_SOURCE_DIR}/Lib/CMSIS-DSP)
+add_subdirectory(${CMSIS_DSP}/Source)
+link_libraries(CMSISDSP)
+
 # uncomment to mitigate c++17 absolute addresses warnings
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-register")
 
