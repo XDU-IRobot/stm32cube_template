@@ -14,7 +14,7 @@ set(SIZE arm-none-eabi-size)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 # project settings
-project(build_template C CXX ASM)
+project(template_stm32f407igtx C CXX ASM)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
 
@@ -64,9 +64,9 @@ add_link_options(-T ${LINKER_SCRIPT})
 # use dsp library
 set(CMSISCORE ${CMAKE_SOURCE_DIR}/Drivers/CMSIS)
 add_subdirectory(${CMAKE_SOURCE_DIR}/CMSIS-DSP/Source)
-link_libraries(CMSISDSP)
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
+target_link_libraries(${PROJECT_NAME}.elf PUBLIC CMSISDSP)
 
 set(HEX_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}.bin)
