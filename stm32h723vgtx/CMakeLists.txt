@@ -63,8 +63,7 @@ add_link_options(-T ${LINKER_SCRIPT})
 
 # use dsp library
 set(CMSISCORE ${CMAKE_SOURCE_DIR}/Drivers/CMSIS)
-set(CMSIS_DSP ${CMAKE_SOURCE_DIR}/CMSIS-DSP)
-add_subdirectory(${CMSIS_DSP}/Source)
+add_subdirectory(${CMAKE_SOURCE_DIR}/CMSIS-DSP/Source)
 
 add_executable(${PROJECT_NAME}.elf ${SOURCES} ${LINKER_SCRIPT})
 target_link_libraries(${PROJECT_NAME}.elf PUBLIC CMSISDSP)
