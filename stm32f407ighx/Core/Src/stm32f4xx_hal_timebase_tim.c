@@ -27,6 +27,7 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef        htim7;
 /* Private function prototypes -----------------------------------------------*/
+ void TimeBase_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim);
 /* Private functions ---------------------------------------------------------*/
 
 /**
@@ -45,12 +46,15 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   uint32_t              uwPrescalerValue = 0U;
   uint32_t              pFLatency;
+
   HAL_StatusTypeDef     status;
 
   /* Enable TIM7 clock */
   __HAL_RCC_TIM7_CLK_ENABLE();
+
   /* Get clock configuration */
   HAL_RCC_GetClockConfig(&clkconfig, &pFLatency);
+
   /* Get APB1 prescaler */
   uwAPB1Prescaler = clkconfig.APB1CLKDivider;
   /* Compute TIM7 clock */
@@ -70,12 +74,11 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   htim7.Instance = TIM7;
 
   /* Initialize TIMx peripheral as follow:
-
-  + Period = [(TIM7CLK/1000) - 1]. to have a (1/1000) s time base.
-  + Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
-  + ClockDivision = 0
-  + Counter direction = Up
-  */
+   * Period = [(TIM7CLK/1000) - 1]. to have a (1/1000) s time base.
+   * Prescaler = (uwTimclock/1000000 - 1) to have a 1MHz counter clock.
+   * ClockDivision = 0
+   * Counter direction = Up
+   */
   htim7.Init.Period = (1000000U / 1000U) - 1U;
   htim7.Init.Prescaler = uwPrescalerValue;
   htim7.Init.ClockDivision = 0;
@@ -85,6 +88,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   status = HAL_TIM_Base_Init(&htim7);
   if (status == HAL_OK)
   {
+
     /* Start the TIM time Base generation in interrupt mode */
     status = HAL_TIM_Base_Start_IT(&htim7);
     if (status == HAL_OK)
@@ -104,6 +108,8 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
       }
     }
   }
+
+  HAL_TIM_RegisterCallback(&htim7, HAL_TIM_PERIOD_ELAPSED_CB_ID, TimeBase_TIM_PeriodElapsedCallback);
 
  /* Return function status */
   return status;
@@ -131,5 +137,22 @@ void HAL_ResumeTick(void)
 {
   /* Enable TIM7 Update interrupt */
   __HAL_TIM_ENABLE_IT(&htim7, TIM_IT_UPDATE);
+}
+
+ /**
+  * @brief  Period elapsed callback in non blocking mode
+  * @note   This function is called  when TIM6 interrupt took place, inside
+  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
+  * a global variable "uwTick" used as application time base.
+  * @param  htim TIM handle
+  * @retval None
+  */
+
+void TimeBase_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  /* Prevent unused argument(s) compilation warning */
+  UNUSED(htim);
+
+  HAL_IncTick();
 }
 
